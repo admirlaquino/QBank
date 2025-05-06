@@ -154,11 +154,11 @@ function launchConfetti() {
     if (timeLeft <= 0) return clearInterval(interval);
 
     confetti(Object.assign({}, defaults, {
-      particleCount: 25,
+      particleCount: 35,
       origin: { x: 0, y: Math.random() - 0.2 }
     }));
     confetti(Object.assign({}, defaults, {
-      particleCount: 25,
+      particleCount: 35,
       origin: { x: 1, y: Math.random() - 0.2 }
     }));
   }, 250);
