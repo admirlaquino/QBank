@@ -1,4 +1,4 @@
-cont englishQuestions = [
+const englishQuestions = [
       ["Who wrote 'Romeo and Juliet'?", "William Shakespeare", "Charles Dickens", "Jane Austen", "Mark Twain", "William Shakespeare wrote 'Romeo and Juliet'."],
       ["What is a synonym of 'happy'?", "Joyful", "Angry", "Sad", "Tired", "A synonym for 'happy' is 'joyful'."],
   ["What figure of speech is used in 'The wind whispered through the trees'?", "Personification", "Simile", "Metaphor", "Alliteration", "'The wind whispered' gives human traits to wind, which is personification."],
