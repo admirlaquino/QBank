@@ -1,6 +1,6 @@
 const questionBank = {
     Math: [
-     ["What is 15 \u00D7 3?", "45", "40", "50", "35", "15 times 3 equals 45."],
+    ["What is 15 \u00D7 3?", "45", "40", "50", "35", "15 times 3 equals 45."],
     ["What is 144 ÷ 12?", "12", "10", "14", "16", "144 divided by 12 is 12."],
     ["What is the square of 9?", "81", "72", "90", "99", "The square of 9 is 81 because 9 \u00D7 9 = 81."],
     ["What is the cube root of 27?", "3", "9", "6", "4", "The cube root of 27 is 3 because 3 \u00D7 3 \u00D7 3 = 27."],
@@ -35,7 +35,7 @@ const questionBank = {
     ["What is the derivative of x²?", "2x", "x", "x²", "3x", "The derivative of x² is 2x."],
     ["How many degrees are in a straight line?", "180°", "90°", "360°", "120°", "A straight line has 180°."],
     ["What is the product of 0.5 and 0.4?", "0.2", "0.5", "0.4", "0.25", "0.5 \u00D7 0.4 = 0.2."],
-    ["What is the sum of angles in a quadrilateral?", "360°", "180°", "270°", "450°", "A quadrilateral's angles sum to 360°."]
+    ["What is the sum of angles in a quadrilateral?", "360°", "180°", "270°", "450°", "A quadrilateral's angles sum to 360°."],
   ],
     Science: [
       ["What is the boiling point of water?", "100°C", "50°C", "200°C", "150°C", "Water boils at 100°C under normal atmospheric pressure."],
