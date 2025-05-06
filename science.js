@@ -1,0 +1,22 @@
+const scienceQuestions = [
+  ["What is the boiling point of water?", "100°C", "50°C", "200°C", "150°C", "Water boils at 100°C under normal atmospheric pressure."],
+    ["Which gas is most abundant in Earth's atmosphere?", "Nitrogen", "Oxygen", "Carbon Dioxide", "Hydrogen", "Nitrogen makes up about 78% of Earth's atmosphere."],
+    ["What force keeps planets in orbit around the Sun?", "Gravity", "Magnetism", "Friction", "Tension", "Gravity is the force that keeps planets in orbit around the Sun."],
+    ["What is the basic unit of life?", "Cell", "Atom", "Molecule", "Organ", "The cell is the basic unit of life in all living organisms."],
+    ["Which vitamin is mainly obtained from sunlight?", "Vitamin D", "Vitamin C", "Vitamin A", "Vitamin B", "Vitamin D is produced in the skin when exposed to sunlight."],
+    ["What is the hardest natural substance on Earth?", "Diamond", "Gold", "Iron", "Quartz", "Diamond is the hardest natural substance known."],
+    ["Which organ in the human body pumps blood?", "Heart", "Liver", "Lungs", "Kidney", "The heart pumps blood throughout the body."],
+    ["What is the primary function of the lungs?", "Breathing", "Digestion", "Circulation", "Excretion", "The lungs facilitate breathing by exchanging oxygen and carbon dioxide."],
+    ["What is Earth's largest ocean?", "Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "The Pacific Ocean is the largest ocean on Earth."],
+    ["What do bees collect to make honey?", "Nectar", "Pollen", "Water", "Leaves", "Bees collect nectar from flowers to produce honey."],
+    ["What planet is closest to the Sun?", "Mercury", "Venus", "Earth", "Mars", "Mercury is the closest planet to the Sun."],
+    ["What is the chemical symbol for gold?", "Au", "Ag", "Fe", "Hg", "The chemical symbol for gold is Au."],
+    ["What kind of energy is stored in food?", "Chemical Energy", "Thermal Energy", "Electrical Energy", "Mechanical Energy", "Food stores chemical energy used by living organisms."],
+    ["Which gas do humans exhale when they breathe?", "Carbon Dioxide", "Oxygen", "Nitrogen", "Helium", "Humans exhale carbon dioxide after respiration."],
+    ["What type of blood cells help fight infections?", "White Blood Cells", "Red Blood Cells", "Platelets", "Plasma", "White blood cells help defend the body against infections."],
+    ["What is the process by which plants make their food?", "Photosynthesis", "Respiration", "Fermentation", "Digestion", "Photosynthesis is the process plants use to produce food using sunlight."],
+    ["Which part of the plant absorbs water?", "Roots", "Leaves", "Stem", "Flowers", "Roots absorb water and nutrients from the soil."],
+    ["What does a thermometer measure?", "Temperature", "Pressure", "Speed", "Density", "A thermometer measures temperature."],
+    ["What causes tides in the ocean?", "Moon's gravity", "Sun's heat", "Wind", "Earth's rotation", "The Moon's gravitational pull is the main cause of ocean tides."],
+    ["What instrument is used to measure earthquakes?", "Seismometer", "Barometer", "Thermometer", "Compass", "A seismometer detects and measures earthquakes."]
+  ];
