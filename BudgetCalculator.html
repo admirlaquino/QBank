@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salary Budget Calculator</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --main-bg: #f8f9fa;
+      --accent-color: #4CAF50;
+      --dark: #343a40;
+      --white: #ffffff;
+      --gray: #ced4da;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--main-bg);
+      padding: 30px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--dark);
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+      color: var(--dark);
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 4px;
+      border: 1px solid var(--gray);
+      border-radius: 5px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      margin-right: 6px;
+    }
+
+    .section {
+      background: var(--white);
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .result {
+      background: var(--white);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .needs-breakdown {
+      margin-top: 10px;
+      padding-left: 15px;
+      font-size: 0.95rem;
+    }
+
+    canvas {
+      max-width: 100%;
+      margin-top: 30px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 25px;
+      background: var(--accent-color);
+      color: var(--white);
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #388e3c;
+    }
+
+    .inline-labels label {
+      display: inline-block;
+      margin-right: 15px;
+      font-weight: normal;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #2f4f4f;
+    }
+
+    .deductions {
+      color: red;
+    }
+
+    .HomeTake {
+      color: green;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Salary Budget Calculator</h1>
+
+  <label>Salary per Day:
+    <input type="number" id="salaryPerDay" />
+  </label>
+  <label><input type="checkbox" id="isRenting"> I am renting</label>
+
+  <label>PhilHealth (editable):
+    <input type="number" id="philHealth" value="475" />
+  </label>
+  <label>SSS (editable):
+    <input type="number" id="sss" value="250" />
+  </label>
+  <label>PAG-IBIG (editable):
+    <input type="number" id="pagIbig" value="194" />
+  </label>
+
+  <p><strong>Budget Allocation Options:</strong> You can use the default percentages or modify them below:</p>
+  <label>Needs %:
+    <input type="number" id="needsPercent" value="80">
+  </label>
+  <label>Savings %:
+    <input type="number" id="savingsPercent" value="15">
+  </label>
+  <label>Wants %:
+    <input type="number" id="wantsPercent" value="5">
+  </label>
+
+  <p><strong>Needs Breakdown (adjustable):</strong> You can make the items 0% and add its allocated percentage to other items. <i>(Fare fee: 0% then Emergency Fund: 12% with the 7% added from fare fee.)</i></p>
+  <label>Food % of Needs:
+    <input type="number" id="foodPercent" value="50">
+  </label>
+  <label>Utilities (Kuryente/Tubig) % of Needs:
+    <input type="number" id="utilitiesPercent" value="25">
+  </label>
+  <label>Fare Fee % of Needs:
+    <input type="number" id="farePercent" value="15">
+  </label>
+  <label>Emergency Fund % of Needs:
+    <input type="number" id="emergencyPercent" value="10">
+  </label>
+
+  <label>Budget View:</label>
+  <label><input type="radio" name="budgetView" value="15" checked> Every 15 days</label>
+  <label><input type="radio" name="budgetView" value="monthly"> Monthly total only</label>
+
+  <button onclick="calculateBudget()">Calculate</button>
+  <button onclick="window.print()">Print</button>
+
+  <div class="result" id="result"></div>
+  <canvas id="budgetChart"></canvas>
+
+  <script>
+      function validatePercentages(total, label) {
+      if (total > 100) {
+        alert(`${label} total exceeds 100% by ${(total - 100).toFixed(2)}%. Please adjust the values.`);
+        return false;
+      } else if (total < 100) {
+        alert(`${label} total is under 100% by ${(100 - total).toFixed(2)}%. Please adjust the values.`);
+        return false;
+      }
+      return true;
+    }
+
+    function calculateBudget() {
+      const needs = parseFloat(document.getElementById("needsPercent").value);
+      const savings = parseFloat(document.getElementById("savingsPercent").value);
+      const wants = parseFloat(document.getElementById("wantsPercent").value);
+      const budgetTotal = needs + savings + wants;
+      if (!validatePercentages(budgetTotal, 'Budget allocation')) return;
+
+      const food = parseFloat(document.getElementById("foodPercent").value);
+      const utilities = parseFloat(document.getElementById("utilitiesPercent").value);
+      const fare = parseFloat(document.getElementById("farePercent").value);
+      const emergency = parseFloat(document.getElementById("emergencyPercent").value);
+      const rent = document.getElementById("isRenting").checked ? 35 : 0;
+
+      const needsBreakdownTotal = food + utilities + fare + emergency + rent;
+      if (!validatePercentages(needsBreakdownTotal, 'Needs breakdown')) return;
+
+      // continue with existing budget calculation logic
+      
+      const salaryPerDay = parseFloat(document.getElementById("salaryPerDay").value);
+      const philHealth = parseFloat(document.getElementById("philHealth").value);
+      const sss = parseFloat(document.getElementById("sss").value);
+      const pagIbig = parseFloat(document.getElementById("pagIbig").value);
+      const isRenting = document.getElementById("isRenting").checked;
+      const viewMode = document.querySelector('input[name="budgetView"]:checked').value;
+
+      const needsPercent = parseFloat(document.getElementById("needsPercent").value) / 100;
+      const savingsPercent = parseFloat(document.getElementById("savingsPercent").value) / 100;
+      const wantsPercent = parseFloat(document.getElementById("wantsPercent").value) / 100;
+
+      const foodPercent = parseFloat(document.getElementById("foodPercent").value) / 100;
+      const utilitiesPercent = parseFloat(document.getElementById("utilitiesPercent").value) / 100;
+      const farePercent = parseFloat(document.getElementById("farePercent").value) / 100;
+      const emergencyPercent = parseFloat(document.getElementById("emergencyPercent").value) / 100;
+
+      const needsTotalPercent = foodPercent + utilitiesPercent + farePercent + emergencyPercent + (isRenting ? 0.35 : 0);
+      if (needsTotalPercent > 1.0) {
+        alert("Your needs breakdown exceeds 100%. Please adjust the values.");
+        return;
+      }
+
+      if (isNaN(salaryPerDay)) {
+        alert("Please enter a valid salary per day.");
+        return;
+      }
+
+      const annualSalary = salaryPerDay * 261;
+      const monthlySalary = annualSalary / 12;
+      const salaryPerPayday = monthlySalary / 2;
+
+      const firstN = salaryPerPayday * needsPercent;
+      const firstSv = salaryPerPayday * savingsPercent;
+      const firstW = salaryPerPayday * wantsPercent;
+      const firstTakeHome = salaryPerPayday;
+
+      const deductions = philHealth + sss + pagIbig;
+      const secondTakeHome = salaryPerPayday - deductions;
+      const secondN = secondTakeHome * needsPercent;
+      const secondSv = secondTakeHome * savingsPercent;
+      const secondW = secondTakeHome * wantsPercent;
+
+      const rentPercent = isRenting ? 0.35 : 0;
+
+      const breakdown = (amount) => {
+        return {
+          rent: isRenting ? amount * rentPercent : 0,
+          food: amount * foodPercent,
+          utilities: amount * utilitiesPercent,
+          fare: amount * farePercent,
+          emergency: amount * emergencyPercent
+        };
+      };
+
+      const firstBreakdown = breakdown(firstN);
+      const secondBreakdown = breakdown(secondN);
+      const totalDeductions = deductions;
+      const monthlyTakeHome = monthlySalary - totalDeductions;
+      const monthlyN = monthlyTakeHome * needsPercent;
+      const monthlySv = monthlyTakeHome * savingsPercent;
+      const monthlyW = monthlyTakeHome * wantsPercent;
+      const monthlyBreakdown = breakdown(monthlyN);
+
+      let output = `
+        <strong>Annual Salary:</strong> ₱${annualSalary.toFixed(2)}<br>
+        <strong>Monthly Salary:</strong> ₱${monthlySalary.toFixed(2)}<br>
+        <strong>Salary per Payday:</strong> ₱${salaryPerPayday.toFixed(2)}<br><br>
+      `;
+
+      if (viewMode === "15") {
+        output += `
+          <strong>A. 1st Salary (15th):</strong><br>
+          <div class="HomeTake">Take-home Pay: ₱${firstTakeHome.toFixed(2)}<br>
+          </div>
+          Needs (${(needsPercent * 100).toFixed(0)}%): ₱${firstN.toFixed(2)}<br>
+          Savings (${(savingsPercent * 100).toFixed(0)}%): ₱${firstSv.toFixed(2)}<br>
+          Wants (${(wantsPercent * 100).toFixed(0)}%): ₱${firstW.toFixed(2)}<br>
+          <div class="needs-breakdown">
+            <strong>Needs Breakdown (from 1st Salary):</strong><br>
+            ${isRenting ? `Rent (35%): ₱${firstBreakdown.rent.toFixed(2)}<br>` : ''}
+            Food (${(foodPercent * 100)}%): ₱${firstBreakdown.food.toFixed(2)}<br>
+            Utilities (${(utilitiesPercent * 100)}%): ₱${firstBreakdown.utilities.toFixed(2)}<br>
+            Fare Fee (${(farePercent * 100)}%): ₱${firstBreakdown.fare.toFixed(2)}<br>
+            Emergency Fund (${(emergencyPercent * 100)}%): ₱${firstBreakdown.emergency.toFixed(2)}
+          </div><br>
+
+          <strong>B. 2nd Salary (30th):</strong><br>
+          <div class="deductions">PhilHealth: ₱${philHealth.toFixed(2)}<br>
+          SSS: ₱${sss.toFixed(2)}<br>
+          PAG-IBIG: ₱${pagIbig.toFixed(2)}<br>
+          Total Deductions: ₱${deductions.toFixed(2)}<br>
+          </div>
+          <div class="HomeTake">Take-home Pay: ₱${secondTakeHome.toFixed(2)}<br>
+          </div>
+          Needs (${(needsPercent * 100).toFixed(0)}%): ₱${secondN.toFixed(2)}<br>
+          Savings (${(savingsPercent * 100).toFixed(0)}%): ₱${secondSv.toFixed(2)}<br>
+          Wants (${(wantsPercent * 100).toFixed(0)}%): ₱${secondW.toFixed(2)}<br>
+          <div class="needs-breakdown">
+            <strong>Needs Breakdown (from 2nd Salary):</strong><br>
+            ${isRenting ? `Rent (35%): ₱${secondBreakdown.rent.toFixed(2)}<br>` : ''}
+            Food (${(foodPercent * 100)}%): ₱${secondBreakdown.food.toFixed(2)}<br>
+            Utilities (${(utilitiesPercent * 100)}%): ₱${secondBreakdown.utilities.toFixed(2)}<br>
+            Fare Fee (${(farePercent * 100)}%): ₱${secondBreakdown.fare.toFixed(2)}<br>
+            Emergency Fund (${(emergencyPercent * 100)}%): ₱${secondBreakdown.emergency.toFixed(2)}
+          </div><br>
+          
+          <strong>C. Monthly Total Allocation (after deductions):</strong><br>
+          <div class="HomeTake">Monthly Take-home Pay: ₱${monthlyTakeHome.toFixed(2)}<br>
+          </div>
+          Needs (${(needsPercent * 100).toFixed(0)}%): ₱${monthlyN.toFixed(2)}<br>
+          Savings (${(savingsPercent * 100).toFixed(0)}%): ₱${monthlySv.toFixed(2)}<br>
+          Wants (${(wantsPercent * 100).toFixed(0)}%): ₱${monthlyW.toFixed(2)}<br>
+          <div class="needs-breakdown">
+            <strong>Needs Breakdown (Monthly):</strong><br>
+            ${isRenting ? `Rent (35%): ₱${monthlyBreakdown.rent.toFixed(2)}<br>` : ''}
+            Food (${(foodPercent * 100)}%): ₱${monthlyBreakdown.food.toFixed(2)}<br>
+            Utilities (${(utilitiesPercent * 100)}%): ₱${monthlyBreakdown.utilities.toFixed(2)}<br>
+            Fare Fee (${(farePercent * 100)}%): ₱${monthlyBreakdown.fare.toFixed(2)}<br>
+            Emergency Fund (${(emergencyPercent * 100)}%): ₱${monthlyBreakdown.emergency.toFixed(2)}
+          </div>
+        `;
+      } else {
+        output += `
+          <strong>Monthly Total Allocation (after deductions):</strong><br>
+          <div class="deductions">PhilHealth: ₱${philHealth.toFixed(2)}<br>
+          SSS: ₱${sss.toFixed(2)}<br>
+          PAG-IBIG: ₱${pagIbig.toFixed(2)}<br>
+          Total Deductions: ₱${totalDeductions.toFixed(2)}<br>
+          </div>
+          <div class="HomeTake">Monthly Take-home Pay: ₱${monthlyTakeHome.toFixed(2)}<br>
+          </div>
+          Needs (${(needsPercent * 100).toFixed(0)}%): ₱${monthlyN.toFixed(2)}<br>
+          Savings (${(savingsPercent * 100).toFixed(0)}%): ₱${monthlySv.toFixed(2)}<br>
+          Wants (${(wantsPercent * 100).toFixed(0)}%): ₱${monthlyW.toFixed(2)}<br>
+          <div class="needs-breakdown">
+            <strong>Needs Breakdown (Monthly):</strong><br>
+            ${isRenting ? `Rent (35%): ₱${monthlyBreakdown.rent.toFixed(2)}<br>` : ''}
+            Food (${(foodPercent * 100)}%): ₱${monthlyBreakdown.food.toFixed(2)}<br>
+            Utilities (${(utilitiesPercent * 100)}%): ₱${monthlyBreakdown.utilities.toFixed(2)}<br>
+            Fare Fee (${(farePercent * 100)}%): ₱${monthlyBreakdown.fare.toFixed(2)}<br>
+            Emergency Fund (${(emergencyPercent * 100)}%): ₱${monthlyBreakdown.emergency.toFixed(2)}
+          </div>
+        `;
+      }
+
+      document.getElementById("result").innerHTML = output;
+
+      const chart = document.getElementById("budgetChart").getContext("2d");
+      if (window.budgetChartInstance) {
+        window.budgetChartInstance.destroy();
+      }
+      window.budgetChartInstance = new Chart(chart, {
+        type: 'bar',
+        data: {
+          labels: ['Needs', 'Savings', 'Wants'],
+          datasets: [{
+            label: 'Total Allocation (Monthly After Deductions)',
+            data: [monthlyN, monthlySv, monthlyW],
+            backgroundColor: ['#4CAF50', '#2196F3', '#FFC107']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Monthly Budget Allocation (After Deductions)' }
+          }
+        }
+      });
+      
+    
+    }
+    
+  </script>
+
+</body>
+</html>
